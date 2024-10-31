@@ -1,30 +1,22 @@
 import * as React from "react";
 import { QRCanvas } from "qrcanvas-react";
 import { ActionButton } from "@fluentui/react/lib/components/Button/ActionButton/ActionButton";
-import {
-  DefaultButton,
-  PrimaryButton,
-  CommandButton,
-} from "@fluentui/react/lib/Button";
+import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
 import { Panel, PanelType } from "@fluentui/react/lib/Panel";
 import { IIconProps } from "@fluentui/react/lib/components/Icon/Icon.types";
 import { useBoolean } from "@fluentui/react-hooks";
 import { useReactToPrint } from "react-to-print";
 import { Stack } from "@fluentui/react";
 import { IStackTokens, IStackItemStyles } from "@fluentui/react";
-
-export interface IQRCodeGenrops {
-  // These are set based on the toggles shown above the examples (not needed in real code)
-  buttonValue: string;
-  buttonLink: string;
-}
+import { IQRCodeGenProps } from "./Component.types";
+import html2canvas from "html2canvas";
 
 const buttonStyles = { root: { marginRight: 8 } };
-let canvasRef: QRCanvas;
 
-export const ButtonAnchor: React.FunctionComponent<IQRCodeGenrops> = (
+export const ButtonAnchor: React.FunctionComponent<IQRCodeGenProps> = (
   props
 ) => {
+  const { name, product, category, parentAsset } = props.infoLabels;
   const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] =
     useBoolean(false);
 
@@ -50,14 +42,28 @@ export const ButtonAnchor: React.FunctionComponent<IQRCodeGenrops> = (
     },
   };
 
+  const qrIcon: IIconProps = { iconName: "QRCode" };
+
+  const isMinWidthExceeded = (window.innerWidth * 20) / 100 > 345;
+
+  const handleDownload = async () => {
+    if (printRef.current) {
+      const canvas = await html2canvas(printRef.current);
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "QRCode_with_Label.png";
+      link.click();
+    }
+  };
+
   const onRenderFooterContent = React.useCallback(
     () => (
       <Stack horizontal tokens={horizontalGapStack}>
         <Stack.Item grow styles={stackItemStyles} align="center">
           <PrimaryButton
-            href={_getImageUri()}
+            onClick={handleDownload}
             styles={buttonStyles}
-            download={true}
+            // download={true}
           >
             Download
           </PrimaryButton>
@@ -80,10 +86,6 @@ export const ButtonAnchor: React.FunctionComponent<IQRCodeGenrops> = (
     [dismissPanel]
   );
 
-  const qrIcon: IIconProps = { iconName: "QRCode" };
-
-  const isMinWidthExceeded = (window.innerWidth * 20) / 100 > 345;
-
   return (
     <div>
       <ActionButton
@@ -105,18 +107,54 @@ export const ButtonAnchor: React.FunctionComponent<IQRCodeGenrops> = (
           style={{
             display: "flex",
             flexDirection: "column",
-            width: "100%",
             justifyContent: "center",
             height: "100%",
             alignItems: "center",
-            paddingTop: "20vh",
+            paddingTop: "5vh",
+            gap: "12px",
+            padding: "5vh 24px 24px ",
           }}
           ref={printRef}
         >
+          {name && (
+            <>
+              <h3>
+                <b>{name}</b>
+              </h3>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  alignItems: "center",
+                }}
+              >
+                {category && (
+                  <span style={{ textAlign: "center" }}>
+                    <b>Category:</b> <br />
+                    {category[0]}
+                  </span>
+                )}
+                {parentAsset && (
+                  <span style={{ textAlign: "center" }}>
+                    <b>Parent Asset:</b> <br />
+                    {parentAsset[0]}
+                  </span>
+                )}
+                {product && (
+                  <span style={{ textAlign: "center" }}>
+                    <b>Product:</b>
+                    <br /> {product[0]}
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+
           <QRCanvas
-            ref={(elm: QRCanvas) => {
-              canvasRef = elm;
-            }}
+            // ref={(elm: QRCanvas) => {
+            //   canvasRef = elm;
+            // }}
             options={options}
           />
         </div>
@@ -124,12 +162,3 @@ export const ButtonAnchor: React.FunctionComponent<IQRCodeGenrops> = (
     </div>
   );
 };
-
-function _getImageUri(): string {
-  if (canvasRef != null) {
-    const canvas: HTMLCanvasElement = canvasRef["canvas"];
-    const dataUri = canvas.toDataURL("image/png");
-    return dataUri;
-  }
-  return "";
-}

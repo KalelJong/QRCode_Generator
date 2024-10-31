@@ -1,7 +1,8 @@
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { ButtonAnchor, IQRCodeGenrops } from "./App/Component/QRCodeGenerator";
+import { ButtonAnchor } from "./App/Component/QRCodeGenerator";
+import { IQRCodeGenProps } from "./App/Component/Component.types";
 
 export class QRCodeGenerator
   implements ComponentFramework.ReactControl<IInputs, IOutputs>
@@ -9,10 +10,16 @@ export class QRCodeGenerator
   private theComponent: ComponentFramework.ReactControl<IInputs, IOutputs>;
   private notifyOutputChanged: () => void;
   private theContainer: HTMLDivElement;
-  private props: IQRCodeGenrops = {
+  private props: IQRCodeGenProps = {
     //tableValue: this.numberFacesChanged.bind(this),
     buttonValue: "",
     buttonLink: "",
+    infoLabels: {
+      name: null,
+      category: null,
+      parentAsset: null,
+      product: null,
+    },
   };
 
   /**
@@ -48,6 +55,10 @@ export class QRCodeGenerator
       context.parameters.QRCodeLink.raw! === null
         ? window.location.href
         : context.parameters.QRCodeLink.raw!;
+    this.props.infoLabels.name = context.parameters.name?.raw;
+    this.props.infoLabels.category = context.parameters.category?.raw;
+    this.props.infoLabels.parentAsset = context.parameters.parentAsset?.raw;
+    this.props.infoLabels.product = context.parameters.product?.raw;
 
     return React.createElement(ButtonAnchor, this.props);
   }
