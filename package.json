@@ -15,6 +15,7 @@
   "dependencies": {
     "@fluentui/react": "8.29.0",
     "@uifabric/react-hooks": "^7.16.4",
+    "html2canvas": "^1.4.1",
     "qrcanvas-react": "^2.0.2",
     "react": "16.8.6",
     "react-dom": "16.8.6",
