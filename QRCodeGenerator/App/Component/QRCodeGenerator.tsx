@@ -132,19 +132,19 @@ export const ButtonAnchor: React.FunctionComponent<IQRCodeGenProps> = (
                 {category && (
                   <span style={{ textAlign: "center" }}>
                     <b>Category:</b> <br />
-                    {category[0]}
+                    {category[0].name}
                   </span>
                 )}
                 {parentAsset && (
                   <span style={{ textAlign: "center" }}>
                     <b>Parent Asset:</b> <br />
-                    {parentAsset[0]}
+                    {parentAsset[0].name}
                   </span>
                 )}
                 {product && (
                   <span style={{ textAlign: "center" }}>
                     <b>Product:</b>
-                    <br /> {product[0]}
+                    <br /> {product[0].name}
                   </span>
                 )}
               </div>

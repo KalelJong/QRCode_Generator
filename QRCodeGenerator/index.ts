@@ -10,17 +10,17 @@ export class QRCodeGenerator
   private theComponent: ComponentFramework.ReactControl<IInputs, IOutputs>;
   private notifyOutputChanged: () => void;
   private theContainer: HTMLDivElement;
-  private props: IQRCodeGenProps = {
-    //tableValue: this.numberFacesChanged.bind(this),
-    buttonValue: "",
-    buttonLink: "",
-    infoLabels: {
-      name: null,
-      category: null,
-      parentAsset: null,
-      product: null,
-    },
-  };
+  // private props: IQRCodeGenProps = {
+  //   //tableValue: this.numberFacesChanged.bind(this),
+  //   buttonValue: "",
+  //   buttonLink: "",
+  //   infoLabels: {
+  //     name: null,
+  //     category: null,
+  //     parentAsset: null,
+  //     product: null,
+  //   },
+  // };
 
   /**
    * Empty constructor.
@@ -50,17 +50,25 @@ export class QRCodeGenerator
   public updateView(
     context: ComponentFramework.Context<IInputs>
   ): React.ReactElement {
-    this.props.buttonValue = context.parameters.buttonValue.raw!;
-    this.props.buttonLink =
+    const buttonValue = context.parameters.buttonValue.raw!;
+    const buttonLink =
       context.parameters.QRCodeLink.raw! === null
         ? window.location.href
         : context.parameters.QRCodeLink.raw!;
-    this.props.infoLabels.name = context.parameters.name?.raw;
-    this.props.infoLabels.category = context.parameters.category?.raw;
-    this.props.infoLabels.parentAsset = context.parameters.parentAsset?.raw;
-    this.props.infoLabels.product = context.parameters.product?.raw;
+    const name = context.parameters.name?.raw;
 
-    return React.createElement(ButtonAnchor, this.props);
+    const category = context.parameters.category?.raw;
+
+    const parentAsset = context.parameters.parentAsset?.raw;
+
+    const product = context.parameters.product?.raw;
+
+    const props: IQRCodeGenProps = {
+      buttonValue,
+      buttonLink,
+      infoLabels: { name, category, parentAsset, product },
+    };
+    return React.createElement(ButtonAnchor, props);
   }
 
   /**
